@@ -1,0 +1,1241 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DIỆU HÀ - Mỹ Phẩm & TPCN Hàn Quốc Xách Tay 3D Premium</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        krose: {
+                            50: '#FFF2F5',
+                            100: '#FFE3E8',
+                            200: '#FFC5D0',
+                            300: '#FFA0B2',
+                            400: '#FF6B8B',
+                            500: '#E63963',
+                            600: '#C9184A',
+                        },
+                        rosegold: {
+                            light: '#F4E0E5',
+                            DEFAULT: '#B76E79',
+                            dark: '#934B56',
+                        },
+                        kgold: '#D4AF37',
+                    },
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                        serif: ['"Cormorant Garamond"', 'serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Base Styling */
+        body {
+            background: linear-gradient(135deg, #FFF5F7 0%, #FDEEEF 50%, #FFF0F3 100%);
+            overflow-x: hidden;
+            perspective: 1000px;
+        }
+
+        /* 3D Sakura falling petals animation */
+        .sakura-3d-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 99;
+            overflow: hidden;
+        }
+
+        .petal-3d {
+            position: absolute;
+            background: linear-gradient(135deg, rgba(255, 182, 193, 0.85), rgba(255, 107, 139, 0.7));
+            border-radius: 150% 0 150% 0;
+            box-shadow: 0 4px 10px rgba(230, 57, 99, 0.2);
+            pointer-events: none;
+            animation: floatSakura 12s cubic-bezier(0.25, 0.46, 0.45, 0.94) infinite;
+        }
+
+        @keyframes floatSakura {
+            0% {
+                top: -10%;
+                transform: translateX(0) rotateX(0deg) rotateY(0deg) scale(0.8);
+                opacity: 0.9;
+            }
+            50% {
+                transform: translateX(80px) rotateX(180deg) rotateY(90deg) scale(1.1);
+                opacity: 0.7;
+            }
+            100% {
+                top: 105%;
+                transform: translateX(-40px) rotateX(360deg) rotateY(180deg) scale(0.7);
+                opacity: 0.1;
+            }
+        }
+
+        /* 3D Tilt Card Effects */
+        .card-3d-container {
+            transform-style: preserve-3d;
+            transition: transform 0.25s cubic-bezier(0.03, 0.98, 0.52, 0.99), box-shadow 0.3s ease;
+        }
+
+        .card-3d-container:hover {
+            box-shadow: 0 25px 45px -12px rgba(230, 57, 99, 0.25), 0 10px 20px -5px rgba(0, 0, 0, 0.05);
+        }
+
+        .card-3d-layer-1 { transform: translateZ(15px); }
+        .card-3d-layer-2 { transform: translateZ(30px); }
+        .card-3d-layer-3 { transform: translateZ(45px); }
+
+        /* Shimmer & Glow Animation */
+        .shimmer-badge {
+            background: linear-gradient(90deg, #E63963 0%, #FF85A1 50%, #E63963 100%);
+            background-size: 200% 100%;
+            animation: shimmer 3s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+
+        /* Glassmorphism styling */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 197, 208, 0.4);
+        }
+
+        .glass-header {
+            background: rgba(255, 255, 255, 0.93);
+            backdrop-filter: blur(20px);
+        }
+
+        /* Rose Gold Text Gradient */
+        .rose-gold-text {
+            background: linear-gradient(135deg, #B76E79 0%, #E63963 50%, #934B56 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Admin Mode Specific Dynamic Displays */
+        .admin-view-only { display: none !important; }
+        body.is-admin .admin-view-only { display: flex !important; }
+        body.is-admin .admin-view-block { display: block !important; }
+        body.is-admin .admin-view-inline { display: inline-flex !important; }
+
+        /* Floating Animation */
+        .floating-3d {
+            animation: floating 4s ease-in-out infinite;
+        }
+        @keyframes floating {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-12px) rotate(2deg); }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #FFF5F7; }
+        ::-webkit-scrollbar-thumb { background: #FFA0B2; border-radius: 4px; }
+    </style>
+</head>
+<body class="font-sans text-gray-800 antialiased selection:bg-krose-200 selection:text-krose-600">
+
+    <!-- 3D Falling Sakura Container -->
+    <div class="sakura-3d-container" id="sakuraContainer"></div>
+
+    <!-- FLOATING ADMIN DASHBOARD BAR (Chỉ xuất hiện khi Admin đã đăng nhập với mật khẩu 200213) -->
+    <div id="adminStickyBar" class="admin-view-only fixed top-0 left-0 right-0 z-50 bg-gradient-to-r from-gray-900 via-rose-950 to-gray-900 text-white py-2.5 px-4 shadow-2xl border-b border-kgold/40 flex items-center justify-between transition-all">
+        <div class="max-w-7xl mx-auto w-full flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <span class="w-3 h-3 rounded-full bg-emerald-400 animate-ping"></span>
+                <div class="text-xs">
+                    <span class="font-bold text-kgold tracking-wider uppercase">Chế Độ Quản Trị Viên: DIỆU HÀ</span>
+                    <span class="hidden sm:inline text-gray-300 ml-2">• Bạn có thể thay đổi Giá, Ảnh và Thêm sản phẩm trực tiếp</span>
+                </div>
+            </div>
+            
+            <div class="flex items-center gap-2 sm:gap-3">
+                <button onclick="openAdminModal()" class="bg-gradient-to-r from-krose-500 to-rose-600 hover:from-krose-600 hover:to-rose-700 text-white font-bold text-xs py-1.5 px-3.5 rounded-full shadow-lg border border-white/20 flex items-center gap-1.5 transition transform hover:scale-105">
+                    <i class="fa-solid fa-circle-plus"></i> Thêm Sản Phẩm Mới
+                </button>
+                <button onclick="logoutAdmin()" class="bg-white/10 hover:bg-white/20 text-gray-200 text-xs py-1.5 px-3 rounded-full border border-white/10 transition">
+                    <i class="fa-solid fa-right-from-bracket"></i> <span class="hidden sm:inline">Thoát Admin</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN HEADER -->
+    <header class="sticky top-0 z-40 glass-header border-b border-krose-100 shadow-sm transition-all">
+        <!-- Top bar liên hệ -->
+        <div class="bg-gradient-to-r from-krose-600 via-krose-500 to-krose-600 text-white text-xs py-1.5 px-4">
+            <div class="max-w-7xl mx-auto flex justify-between items-center">
+                <span class="inline-flex items-center gap-2 font-medium">
+                    <i class="fa-solid fa-plane-arrival animate-bounce"></i> Hàng Xách Tay Air 100% Chuẩn Seoul • Full Bill Duty Free 🌸
+                </span>
+                <div class="flex items-center gap-4 text-xs font-semibold">
+                    <a href="tel:0862878500" class="hover:underline flex items-center gap-1">
+                        <i class="fa-solid fa-phone text-kgold"></i> 0862878500
+                    </a>
+                    <span class="opacity-40">|</span>
+                    <a href="https://web.facebook.com/dieuha.le.1" target="_blank" rel="noopener noreferrer" class="hover:underline flex items-center gap-1">
+                        <i class="fa-brands fa-facebook"></i> Facebook Diệu Hà
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20 gap-4">
+                
+                <!-- Thương Hiệu DIỆU HÀ với logo 3D -->
+                <div class="flex items-center gap-3.5 cursor-pointer group" onclick="filterCategory('all')">
+                    <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-krose-500 via-krose-400 to-amber-200 flex items-center justify-center text-white text-2xl shadow-lg border-2 border-white transform group-hover:rotate-12 group-hover:scale-110 transition duration-300">
+                        🌺
+                    </div>
+                    <div>
+                        <h1 class="font-serif font-bold text-3xl sm:text-4xl text-krose-600 uppercase tracking-widest leading-none drop-shadow-sm">
+                            DIỆU HÀ
+                        </h1>
+                        <p class="text-[10px] text-gray-500 font-bold tracking-widest uppercase mt-1 flex items-center gap-1.5">
+                            <span class="rose-gold-text font-serif">K-BEAUTY & HEALTH</span> 
+                            <span>• SEOUL XÁCH TAY</span>
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Tìm kiếm -->
+                <div class="hidden md:flex flex-1 max-w-md mx-6">
+                    <div class="relative w-full">
+                        <input type="text" id="searchInput" oninput="handleSearch()" placeholder="Tìm mỹ phẩm Sulwhasoo, Laneige, Hồng Sâm, Collagen..." 
+                            class="w-full pl-10 pr-4 py-2.5 rounded-full border border-krose-200 bg-white/80 focus:outline-none focus:ring-2 focus:ring-krose-400 text-sm transition shadow-inner">
+                        <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-krose-400">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Navigation Controls -->
+                <div class="flex items-center gap-2 sm:gap-3">
+                    <!-- Zalo Hotline -->
+                    <a href="https://zalo.me/0862878500" target="_blank" rel="noopener noreferrer" class="hidden sm:flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-blue-50 text-blue-600 border border-blue-200 text-xs font-bold hover:bg-blue-100 transition shadow-sm">
+                        <i class="fa-solid fa-comment-dots text-sm"></i> Zalo: 0862878500
+                    </a>
+
+                    <!-- Nút Thêm Sản Phẩm (Chỉ hiển thị khi đã đăng nhập Admin) -->
+                    <button onclick="openAdminModal()" class="admin-view-inline items-center gap-1.5 px-4 py-2 rounded-full border border-kgold text-gray-900 bg-amber-100 hover:bg-amber-200 text-xs font-bold transition shadow-md">
+                        <i class="fa-solid fa-plus text-kgold"></i>
+                        <span>Thêm Sản Phẩm</span>
+                    </button>
+
+                    <!-- Cart Button -->
+                    <button onclick="toggleCartModal()" class="relative flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-krose-500 to-krose-600 hover:from-krose-600 hover:to-krose-700 text-white text-sm font-semibold shadow-md hover:shadow-lg transition">
+                        <i class="fa-solid fa-bag-shopping text-base"></i>
+                        <span class="hidden sm:inline">Giỏ hàng</span>
+                        <span id="cartCountBadge" class="ml-1 bg-white text-krose-600 rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold shadow">0</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Mobile Search Bar -->
+            <div class="pb-3 md:hidden">
+                <div class="relative w-full">
+                    <input type="text" id="searchInputMobile" oninput="handleSearchMobile()" placeholder="Tìm Sulwhasoo, Hồng Sâm, Collagen..." 
+                        class="w-full pl-10 pr-4 py-2 rounded-full border border-krose-200 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-krose-400">
+                    <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-krose-400">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- 3D HERO BANNER SECTION -->
+    <section class="relative py-12 sm:py-16 overflow-hidden border-b border-krose-100">
+        <!-- Background 3D Glow Blobs -->
+        <div class="absolute top-1/2 left-1/4 -translate-y-1/2 w-96 h-96 bg-krose-300/30 rounded-full filter blur-3xl -z-10 animate-pulse"></div>
+        <div class="absolute top-1/3 right-1/4 w-80 h-80 bg-amber-200/30 rounded-full filter blur-3xl -z-10"></div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                
+                <div class="lg:col-span-7 text-center lg:text-left">
+                    <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full glass-card border border-krose-200 text-krose-600 text-xs font-bold mb-5 shadow-sm">
+                        <span class="w-2 h-2 rounded-full bg-krose-500 animate-ping"></span>
+                        <span>100% XÁCH TAY BAY AIR TỪ SEOUL - HÀN QUỐC</span>
+                    </div>
+
+                    <h2 class="font-serif text-4xl sm:text-5xl lg:text-6xl font-extrabold text-gray-900 leading-tight mb-5 tracking-tight">
+                        Thương Hiệu <span class="rose-gold-text underline decoration-krose-200">DIỆU HÀ</span>
+                        <br><span class="text-2xl sm:text-4xl text-gray-700 font-sans font-light">Mỹ Phẩm & Thực Phẩm Chức Năng</span>
+                    </h2>
+
+                    <p class="text-gray-600 text-sm sm:text-base mb-8 max-w-xl leading-relaxed">
+                        Chuyên cung cấp các dòng Mỹ phẩm chăm sóc da cao cấp & Thực phẩm chức năng chính hãng Hàn Quốc. Cam kết đầy đủ hoá đơn mua hàng Duty Free tại Hàn Quốc.
+                    </p>
+
+                    <!-- Contact Buttons Banner -->
+                    <div class="flex flex-wrap justify-center lg:justify-start gap-3.5">
+                        <a href="https://zalo.me/0862878500" target="_blank" rel="noopener noreferrer" class="px-6 py-3 rounded-full bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white font-bold text-xs sm:text-sm shadow-lg hover:shadow-xl transition flex items-center gap-2.5 transform hover:-translate-y-0.5">
+                            <i class="fa-solid fa-phone text-base"></i> Hotline / Zalo: 0862878500
+                        </a>
+                        <a href="https://web.facebook.com/dieuha.le.1" target="_blank" rel="noopener noreferrer" class="px-6 py-3 rounded-full bg-gradient-to-r from-indigo-700 to-blue-700 hover:from-indigo-800 hover:to-blue-800 text-white font-bold text-xs sm:text-sm shadow-lg hover:shadow-xl transition flex items-center gap-2.5 transform hover:-translate-y-0.5">
+                            <i class="fa-brands fa-facebook text-base"></i> Facebook Diệu Hà
+                        </a>
+                    </div>
+                </div>
+
+                <!-- 3D Card Floating Highlight -->
+                <div class="lg:col-span-5 flex justify-center">
+                    <div class="relative w-full max-w-sm floating-3d">
+                        <div class="absolute -inset-1 bg-gradient-to-r from-krose-400 to-amber-300 rounded-3xl blur-lg opacity-70"></div>
+                        
+                        <div class="relative glass-card p-4 rounded-3xl shadow-2xl border border-white">
+                            <img src="https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?auto=format&fit=crop&w=800&q=80" alt="Diệu Hà K-Beauty" 
+                                class="rounded-2xl object-cover w-full h-80 shadow-inner">
+                            
+                            <!-- Floating Badge 3D -->
+                            <div class="absolute -bottom-5 -left-5 glass-card p-3.5 rounded-2xl shadow-xl border border-white/80 flex items-center gap-3">
+                                <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-krose-500 to-krose-400 text-white flex items-center justify-center text-xl shadow-md">
+                                    ✈️
+                                </div>
+                                <div>
+                                    <p class="text-xs font-bold text-gray-800">Cam Kết Hàng Air 100%</p>
+                                    <p class="text-[10px] text-gray-500">Cập nhật bill mỗi tuần</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- STORE SECTION WITH 3D CARDS -->
+    <main id="product-section" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        
+        <!-- Category Filter Tabs & Add Product Button -->
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+            <div>
+                <div class="flex items-center gap-3">
+                    <h3 class="font-serif font-bold text-3xl sm:text-4xl text-gray-900">Danh Mục Sản Phẩm</h3>
+                    <!-- Nút Thêm Sản Phẩm bên cạnh danh mục khi ở chế độ Admin -->
+                    <button onclick="openAdminModal()" class="admin-view-inline items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow transition">
+                        <i class="fa-solid fa-plus"></i> Thêm Sản Phẩm Mới
+                    </button>
+                </div>
+                <p class="text-xs text-gray-500 mt-1">Khám phá mỹ phẩm dưỡng da & thực phẩm chức năng chính hãng Hàn Quốc</p>
+            </div>
+
+            <!-- Filter Tabs -->
+            <div class="flex items-center gap-2 overflow-x-auto pb-2 md:pb-0 no-scrollbar" id="categoryTabs">
+                <button onclick="filterCategory('all')" data-cat="all" class="cat-btn px-4 py-2 rounded-full text-xs font-semibold whitespace-nowrap bg-krose-500 text-white shadow-sm transition">
+                    Tất Cả Sản Phẩm
+                </button>
+                <button onclick="filterCategory('Mỹ Phẩm')" data-cat="Mỹ Phẩm" class="cat-btn px-4 py-2 rounded-full text-xs font-semibold whitespace-nowrap bg-white text-gray-600 hover:bg-krose-100 border border-krose-100 transition">
+                    💄 Mỹ Phẩm & SkinCare
+                </button>
+                <button onclick="filterCategory('Thực Phẩm Chức Năng')" data-cat="Thực Phẩm Chức Năng" class="cat-btn px-4 py-2 rounded-full text-xs font-semibold whitespace-nowrap bg-white text-gray-600 hover:bg-krose-100 border border-krose-100 transition">
+                    🌿 Thực Phẩm Chức Năng
+                </button>
+                <button onclick="filterCategory('Collagen & Vitamin')" data-cat="Collagen & Vitamin" class="cat-btn px-4 py-2 rounded-full text-xs font-semibold whitespace-nowrap bg-white text-gray-600 hover:bg-krose-100 border border-krose-100 transition">
+                    ✨ Collagen & Vitamin
+                </button>
+            </div>
+        </div>
+
+        <!-- Product 3D Grid -->
+        <div id="productGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            <!-- Render từ JS -->
+        </div>
+
+        <!-- Empty state -->
+        <div id="emptyState" class="hidden text-center py-16">
+            <div class="text-5xl mb-3">🌸</div>
+            <h4 class="text-lg font-bold text-gray-700">Không tìm thấy sản phẩm phù hợp!</h4>
+            <p class="text-sm text-gray-500 mt-1">Liên hệ ngay với Diệu Hà qua Zalo 0862878500 để order sản phẩm trực tiếp từ Hàn Quốc.</p>
+        </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-white border-t border-krose-200 mt-16 py-10 relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center md:text-left">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+                <div>
+                    <h4 class="font-serif font-bold text-2xl text-krose-600 mb-2">DIỆU HÀ K-BEAUTY</h4>
+                    <p class="text-xs text-gray-600 leading-relaxed">Chuyên nhận order & cung cấp sỉ lẻ mỹ phẩm Hàn Quốc xách tay, thực phẩm chức năng cao cấp từ Olive Young, Duty Free Seoul.</p>
+                </div>
+                <div>
+                    <h5 class="font-bold text-sm text-gray-800 mb-3">Cam Kết Từ Diệu Hà</h5>
+                    <ul class="text-xs text-gray-600 space-y-2">
+                        <li>✈️ Hàng bay Air trực tiếp 100% từ Hàn Quốc</li>
+                        <li>🧾 Có đầy đủ hoá đơn mua hàng Duty Free</li>
+                        <li>🔒 Đền bù 200% nếu phát hiện hàng giả, hàng nhái</li>
+                    </ul>
+                </div>
+                <div>
+                    <h5 class="font-bold text-sm text-gray-800 mb-3">Thông Tin Liên Hệ</h5>
+                    <p class="text-xs text-gray-700 mb-1">Hotline / Zalo: <a href="tel:0862878500" class="font-bold text-krose-600 hover:underline">0862878500</a></p>
+                    <p class="text-xs text-gray-700 mb-3">Facebook: <a href="https://web.facebook.com/dieuha.le.1" target="_blank" rel="noopener noreferrer" class="font-semibold text-blue-600 hover:underline">fb.com/dieuha.le.1</a></p>
+                    
+                    <div class="flex justify-center md:justify-start gap-3 text-white">
+                        <a href="https://zalo.me/0862878500" target="_blank" rel="noopener noreferrer" class="w-9 h-9 rounded-full bg-blue-500 flex items-center justify-center hover:opacity-90 transition text-sm">
+                            <i class="fa-solid fa-phone"></i>
+                        </a>
+                        <a href="https://web.facebook.com/dieuha.le.1" target="_blank" rel="noopener noreferrer" class="w-9 h-9 rounded-full bg-blue-700 flex items-center justify-center hover:opacity-90 transition text-sm">
+                            <i class="fa-brands fa-facebook-f"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-100 pt-6 flex flex-col sm:flex-row items-center justify-between text-xs text-gray-400 gap-2">
+                <span>&copy; 2026 Thương Hiệu DIỆU HÀ - Mỹ Phẩm & TPCN Hàn Quốc Xách Tay.</span>
+                
+                <!-- Nút Đăng Nhập Quản Trị Nội Bộ (Ẩn lịch sự ở Footer) -->
+                <button onclick="openAdminAuthModal()" class="text-gray-400 hover:text-krose-600 transition text-xs p-1.5 flex items-center gap-1 border border-gray-200 rounded-full px-3" title="Quản trị nội bộ">
+                    <i class="fa-solid fa-user-gear"></i>
+                    <span>Quyền Admin</span>
+                </button>
+            </div>
+        </div>
+    </footer>
+
+    <!-- MODAL AUTH ADMIN (MẬT KHẨU ADMIN: 200213) -->
+    <div id="adminAuthModal" class="fixed inset-0 z-50 hidden bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl border border-krose-200 relative text-center">
+            <button onclick="closeAdminAuthModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 w-8 h-8 rounded-full flex items-center justify-center">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <div class="w-12 h-12 bg-krose-100 text-krose-600 rounded-full flex items-center justify-center mx-auto mb-3 text-xl">
+                <i class="fa-solid fa-shield-halved"></i>
+            </div>
+            <h3 class="font-serif font-bold text-2xl text-gray-900 mb-1">Đăng Nhập Quản Trị</h3>
+            <p class="text-xs text-gray-500 mb-4">Nhập mật khẩu nội bộ để bật quyền thêm/sửa sản phẩm.</p>
+            
+            <form onsubmit="verifyAdminPassword(event)" class="space-y-3">
+                <input type="password" id="adminPasswordInput" placeholder="Mật khẩu Admin..." required
+                    class="w-full px-4 py-2.5 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-krose-400 text-sm text-center font-bold">
+                <button type="submit" class="w-full py-2.5 rounded-full bg-gradient-to-r from-krose-500 to-rose-600 hover:from-krose-600 hover:to-rose-700 text-white font-bold text-sm shadow-md transition">
+                    Xác Nhận Đăng Nhập
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL ADMIN: THÊM / CẬP NHẬT SẢN PHẨM -->
+    <div id="adminModal" class="fixed inset-0 z-50 hidden bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-lg w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-krose-200 p-6 relative">
+            <button onclick="closeAdminModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <div class="flex items-center gap-3 mb-5">
+                <div class="w-10 h-10 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center text-lg">
+                    <i class="fa-solid fa-pen-to-square"></i>
+                </div>
+                <div>
+                    <h3 id="modalTitle" class="font-serif font-bold text-xl text-gray-900">Quản Lý Sản Phẩm (Diệu Hà)</h3>
+                    <p class="text-xs text-gray-500">Cập nhật giá, thay đổi hình ảnh hoặc thêm sản phẩm mới</p>
+                </div>
+            </div>
+
+            <form id="productForm" onsubmit="saveProduct(event)" class="space-y-4 text-xs">
+                <input type="hidden" id="prodId">
+
+                <div>
+                    <label class="block font-semibold text-gray-700 mb-1">Tên Sản Phẩm <span class="text-red-500">*</span></label>
+                    <input type="text" id="prodName" required placeholder="Ví dụ: Tinh Chất Phục Hồi Laneige Water Bank" 
+                        class="w-full px-3 py-2.5 rounded-xl border border-gray-300 focus:outline-none focus:border-krose-400 font-medium">
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-semibold text-gray-700 mb-1">Thương Hiệu</label>
+                        <input type="text" id="prodBrand" required placeholder="Laneige, Sulwhasoo..." 
+                            class="w-full px-3 py-2 rounded-xl border border-gray-300 focus:outline-none focus:border-krose-400">
+                    </div>
+                    <div>
+                        <label class="block font-semibold text-gray-700 mb-1">Danh Mục</label>
+                        <select id="prodCategory" class="w-full px-3 py-2 rounded-xl border border-gray-300 focus:outline-none focus:border-krose-400 bg-white">
+                            <option value="Mỹ Phẩm">💄 Mỹ Phẩm & SkinCare</option>
+                            <option value="Thực Phẩm Chức Năng">🌿 Thực Phẩm Chức Năng</option>
+                            <option value="Collagen & Vitamin">✨ Collagen & Vitamin</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-semibold text-gray-700 mb-1">Giá Bán (VNĐ) <span class="text-red-500">*</span></label>
+                        <input type="number" id="prodPrice" required placeholder="450000" 
+                            class="w-full px-3 py-2 rounded-xl border border-gray-300 focus:outline-none focus:border-krose-400 font-bold text-krose-600">
+                    </div>
+                    <div>
+                        <label class="block font-semibold text-gray-700 mb-1">Giá Gốc (Hiện Giảm Giá)</label>
+                        <input type="number" id="prodOriginalPrice" placeholder="550000" 
+                            class="w-full px-3 py-2 rounded-xl border border-gray-300 focus:outline-none focus:border-krose-400 text-gray-500">
+                    </div>
+                </div>
+
+                <!-- TÍNH NĂNG TẢI ẢNH MỚI: TẢI TỪ MÁY HOẶC NHẬP LINK URL -->
+                <div>
+                    <label class="block font-semibold text-gray-700 mb-1">Hình Ảnh Sản Phẩm <span class="text-red-500">*</span></label>
+                    
+                    <!-- Tab chọn phương thức tải ảnh -->
+                    <div class="flex border-b border-gray-200 mb-2">
+                        <button type="button" id="tabUploadFile" onclick="switchImageInputMode('file')" 
+                            class="py-1 px-3 text-xs font-bold text-krose-600 border-b-2 border-krose-500 flex items-center gap-1">
+                            <i class="fa-solid fa-cloud-arrow-up"></i> Tải ảnh từ máy / ĐT
+                        </button>
+                        <button type="button" id="tabUploadUrl" onclick="switchImageInputMode('url')" 
+                            class="py-1 px-3 text-xs font-semibold text-gray-400 flex items-center gap-1">
+                            <i class="fa-solid fa-link"></i> Dán Link URL
+                        </button>
+                    </div>
+
+                    <!-- Khu vực 1: Kéo thả / Chọn file từ thiết bị -->
+                    <div id="imageFileArea" class="block">
+                        <div class="border-2 border-dashed border-krose-200 rounded-2xl p-4 text-center hover:bg-krose-50/50 transition cursor-pointer relative"
+                             onclick="document.getElementById('fileInput').click()"
+                             ondragover="handleDragOver(event)" onmouseleave="handleDragLeave(event)" ondrop="handleDrop(event)">
+                            <input type="file" id="fileInput" accept="image/*" onchange="handleFileSelect(event)" class="hidden">
+                            <i class="fa-solid fa-image text-3xl text-krose-300 mb-2"></i>
+                            <p class="text-xs font-semibold text-gray-700">Bấm để chọn ảnh từ máy hoặc kéo thả ảnh vào đây</p>
+                            <p class="text-[10px] text-gray-400 mt-1">Hỗ trợ JPG, PNG, WEBP (Tự động tối ưu)</p>
+                        </div>
+                    </div>
+
+                    <!-- Khu vực 2: Ô nhập link URL -->
+                    <div id="imageUrlArea" class="hidden">
+                        <input type="url" id="prodImage" onchange="previewImageFromUrl()" placeholder="https://images.unsplash.com/..." 
+                            class="w-full px-3 py-2 rounded-xl border border-gray-300 focus:outline-none focus:border-krose-400">
+                    </div>
+                    
+                    <!-- Input ẩn lưu giá trị ảnh cuối (Base64 hoặc URL) -->
+                    <input type="hidden" id="prodImageFinal">
+
+                    <!-- Preview Image Box -->
+                    <div id="imgPreviewBox" class="mt-3 hidden bg-gray-50 p-2.5 rounded-2xl border border-gray-100 flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <img id="imgPreview" src="" class="w-16 h-16 object-cover rounded-xl border border-gray-200 shadow-sm">
+                            <div>
+                                <span class="text-xs font-bold text-gray-800 block">Xem trước ảnh sản phẩm</span>
+                                <span id="imgSizeText" class="text-[10px] text-emerald-600 font-semibold">Ảnh sẵn sàng để lưu</span>
+                            </div>
+                        </div>
+                        <button type="button" onclick="clearSelectedImage()" class="text-gray-400 hover:text-red-500 p-2">
+                            <i class="fa-solid fa-trash-can"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-semibold text-gray-700 mb-1">Tag Nổi Bật</label>
+                        <input type="text" id="prodTag" placeholder="Best Seller / Hot Deal / Full Bill" 
+                            class="w-full px-3 py-2 rounded-xl border border-gray-300 focus:outline-none focus:border-krose-400">
+                    </div>
+                    <div>
+                        <label class="block font-semibold text-gray-700 mb-1">Trạng Thái Hàng</label>
+                        <select id="prodStock" class="w-full px-3 py-2 rounded-xl border border-gray-300 focus:outline-none focus:border-krose-400 bg-white">
+                            <option value="Sẵn hàng">✅ Sẵn hàng</option>
+                            <option value="Order 3-5 ngày">✈️ Order 3-5 ngày</option>
+                            <option value="Hết hàng">❌ Hết hàng</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block font-semibold text-gray-700 mb-1">Mô Tả Ngắn</label>
+                    <textarea id="prodDesc" rows="3" placeholder="Tác dụng, thành phần nổi bật, quy cách..." 
+                        class="w-full px-3 py-2 rounded-xl border border-gray-300 focus:outline-none focus:border-krose-400"></textarea>
+                </div>
+
+                <div class="flex gap-3 pt-3">
+                    <button type="button" onclick="closeAdminModal()" class="flex-1 py-2.5 rounded-full border border-gray-300 font-semibold text-gray-600 hover:bg-gray-100">
+                        Hủy Bỏ
+                    </button>
+                    <button type="submit" class="flex-1 py-2.5 rounded-full bg-gradient-to-r from-krose-500 to-rose-600 hover:from-krose-600 hover:to-rose-700 text-white font-bold shadow-md">
+                        Lưu Sản Phẩm
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: GIỎ HÀNG (SLIDE-IN CART MODAL) -->
+    <div id="cartModal" class="fixed inset-0 z-50 hidden bg-black/50 backdrop-blur-sm flex justify-end">
+        <div class="bg-white w-full max-w-md h-full shadow-2xl flex flex-col justify-between">
+            <div class="p-4 border-b border-gray-100 flex items-center justify-between bg-krose-50">
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-bag-shopping text-krose-500 text-lg"></i>
+                    <h3 class="font-serif font-bold text-lg text-gray-900">Giỏ Hàng Diệu Hà</h3>
+                </div>
+                <button onclick="toggleCartModal()" class="text-gray-400 hover:text-gray-600 w-8 h-8 rounded-full flex items-center justify-center">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <div id="cartItemsList" class="p-4 overflow-y-auto flex-1 space-y-4"></div>
+
+            <div class="p-4 border-t border-gray-100 bg-gray-50 space-y-3">
+                <div class="flex justify-between items-center text-sm font-semibold">
+                    <span class="text-gray-600">Tổng Tiền Hàng:</span>
+                    <span id="cartTotalPrice" class="text-lg font-bold text-krose-600">0 VNĐ</span>
+                </div>
+                <button onclick="checkout()" class="w-full py-3 rounded-full bg-gradient-to-r from-krose-500 to-krose-600 hover:from-krose-600 hover:to-krose-700 text-white font-bold text-sm shadow-md transition flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-paper-plane"></i> Gửi Đơn Hàng Qua Zalo Diệu Hà
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOAST NOTIFICATION -->
+    <div id="toast" class="fixed bottom-5 right-5 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none">
+        <div class="bg-gray-900 text-white px-4 py-3 rounded-2xl shadow-xl flex items-center gap-3 border border-gray-700">
+            <span id="toastIcon" class="text-krose-400 text-lg">🌸</span>
+            <p id="toastMessage" class="text-xs font-medium">Thông báo ở đây</p>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        // Mật khẩu Admin
+        const ADMIN_PASSWORD = "200213";
+        let isAdminLoggedIn = false;
+
+        const initialProducts = [
+            {
+                id: "p1",
+                name: "Tinh Chất Nước Thần Sulwhasoo First Care Activating Serum 60ml",
+                brand: "Sulwhasoo",
+                category: "Mỹ Phẩm",
+                price: 1850000,
+                originalPrice: 2200000,
+                image: "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?auto=format&fit=crop&w=600&q=80",
+                tag: "Best Seller",
+                stock: "Sẵn hàng",
+                desc: "Chống lão hóa vượt trội, tái tạo da căng mướt. Hàng xách tay chuẩn Seoul."
+            },
+            {
+                id: "p2",
+                name: "Thanh Thỏi Serum Chống Nhăn KAHI Wrinkle Bounce Multi Balm 9g",
+                brand: "KAHI",
+                category: "Mỹ Phẩm",
+                price: 520000,
+                originalPrice: 680000,
+                image: "https://images.unsplash.com/photo-1598440947619-2c35fc9aa908?auto=format&fit=crop&w=600&q=80",
+                tag: "Hot Trend",
+                stock: "Sẵn hàng",
+                desc: "Dưỡng ẩm tức thì, mờ vết nhăn mắt & cổ. Thiết kế nhỏ gọn sang trọng."
+            },
+            {
+                id: "p3",
+                name: "Nước Hồng Sâm Hàn Quốc Cheong Kwan Jang Everytime Mild (30 gói)",
+                brand: "Cheong Kwan Jang",
+                category: "Thực Phẩm Chức Năng",
+                price: 1450000,
+                originalPrice: 1750000,
+                image: "https://images.unsplash.com/photo-1544787219-7f47ccb76574?auto=format&fit=crop&w=600&q=80",
+                tag: "Air 100%",
+                stock: "Sẵn hàng",
+                desc: "Hồng sâm 6 năm tuổi giúp tăng sức đề kháng, giảm mệt mỏi và khỏe đẹp da."
+            },
+            {
+                id: "p4",
+                name: "Viên Uống Cấp Nước Innerb Aqua Rich Double UP (56 viên)",
+                brand: "Innerb Korea",
+                category: "Collagen & Vitamin",
+                price: 680000,
+                originalPrice: 850000,
+                image: "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&w=600&q=80",
+                tag: "Căng Bóng Da",
+                stock: "Sẵn hàng",
+                desc: "Bổ sung gấp đôi Hyaluronic Acid giúp da mịn màng, ngậm nước căng bóng."
+            }
+        ];
+
+        let products = [];
+        let cart = [];
+        let activeCategory = 'all';
+
+        function loadProducts() {
+            const stored = localStorage.getItem('dieuha_3d_products');
+            if (stored) {
+                try { products = JSON.parse(stored); } catch (e) { products = initialProducts; }
+            } else {
+                products = initialProducts;
+                saveProductsToStorage();
+            }
+        }
+
+        function saveProductsToStorage() {
+            localStorage.setItem('dieuha_3d_products', JSON.stringify(products));
+        }
+
+        function loadCart() {
+            const storedCart = localStorage.getItem('dieuha_3d_cart');
+            if (storedCart) {
+                try { cart = JSON.parse(storedCart); } catch(e) { cart = []; }
+            }
+            updateCartBadge();
+        }
+
+        function saveCartToStorage() {
+            localStorage.setItem('dieuha_3d_cart', JSON.stringify(cart));
+            updateCartBadge();
+        }
+
+        // --- AUTH ADMIN LOGIC ---
+        function checkAdminSession() {
+            if (sessionStorage.getItem('dieuha_admin_logged') === 'true') {
+                isAdminLoggedIn = true;
+                document.body.classList.add('is-admin');
+            }
+        }
+
+        function openAdminAuthModal() {
+            document.getElementById('adminPasswordInput').value = '';
+            document.getElementById('adminAuthModal').classList.remove('hidden');
+        }
+
+        function closeAdminAuthModal() {
+            document.getElementById('adminAuthModal').classList.add('hidden');
+        }
+
+        function verifyAdminPassword(e) {
+            e.preventDefault();
+            const pass = document.getElementById('adminPasswordInput').value;
+            if (pass === ADMIN_PASSWORD) {
+                isAdminLoggedIn = true;
+                sessionStorage.setItem('dieuha_admin_logged', 'true');
+                document.body.classList.add('is-admin');
+                closeAdminAuthModal();
+                showToast("Đã kích hoạt chế độ Quản trị Admin Diệu Hà!");
+                renderProducts();
+            } else {
+                alert("Mật khẩu không chính xác! Vui lòng thử lại.");
+            }
+        }
+
+        function logoutAdmin() {
+            isAdminLoggedIn = false;
+            sessionStorage.removeItem('dieuha_admin_logged');
+            document.body.classList.remove('is-admin');
+            showToast("Đã thoát chế độ Quản trị.");
+            renderProducts();
+        }
+
+        // --- RENDER PRODUCTS WITH 3D TILT CARDS ---
+        function renderProducts(itemsToRender = null) {
+            const grid = document.getElementById('productGrid');
+            const emptyState = document.getElementById('emptyState');
+            
+            let list = itemsToRender || products;
+
+            if (activeCategory !== 'all' && !itemsToRender) {
+                list = list.filter(p => p.category === activeCategory);
+            }
+
+            if (list.length === 0) {
+                grid.innerHTML = '';
+                emptyState.classList.remove('hidden');
+                return;
+            } else {
+                emptyState.classList.add('hidden');
+            }
+
+            grid.innerHTML = list.map(p => {
+                const discount = p.originalPrice && p.originalPrice > p.price 
+                    ? Math.round(((p.originalPrice - p.price) / p.originalPrice) * 100) 
+                    : 0;
+
+                return `
+                <div class="card-3d-container glass-card rounded-3xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-300 flex flex-col justify-between group relative border border-krose-200/50"
+                     onmousemove="handle3dTilt(event, this)" onmouseleave="reset3dTilt(this)">
+                    
+                    <!-- Tag Nổi Bật -->
+                    <div class="absolute top-3 left-3 z-20 flex flex-col gap-1 card-3d-layer-2">
+                        <span class="bg-gradient-to-r from-krose-500 to-rose-600 text-white text-[10px] font-bold px-3 py-1 rounded-full shadow-md tracking-wider">
+                            ${p.tag || 'Xách tay Air'}
+                        </span>
+                        ${discount > 0 ? `<span class="bg-amber-400 text-gray-900 text-[10px] font-extrabold px-2 py-0.5 rounded-full shadow-md text-center">-${discount}%</span>` : ''}
+                    </div>
+
+                    <!-- Nút Chỉnh Sửa / Xóa Trực Tiếp Khi Admin Đã Đăng Nhập -->
+                    <div class="admin-view-inline absolute top-3 right-3 z-20 gap-1.5 card-3d-layer-3">
+                        <button onclick="editProduct('${p.id}')" title="Cập nhật giá / ảnh" 
+                            class="w-8 h-8 bg-white/90 hover:bg-white text-gray-800 hover:text-krose-600 rounded-full flex items-center justify-center shadow-lg transition border border-gray-100">
+                            <i class="fa-solid fa-pen-to-square text-xs"></i>
+                        </button>
+                        <button onclick="deleteProduct('${p.id}')" title="Xóa sản phẩm"
+                            class="w-8 h-8 bg-white/90 hover:bg-red-50 text-gray-400 hover:text-red-500 rounded-full flex items-center justify-center shadow-lg transition border border-gray-100">
+                            <i class="fa-solid fa-trash-can text-xs"></i>
+                        </button>
+                    </div>
+
+                    <!-- Product Image with 3D Depth Layer -->
+                    <div class="relative overflow-hidden aspect-square bg-white card-3d-layer-1">
+                        <img src="${p.image}" alt="${p.name}" 
+                            onerror="this.src='https://placehold.co/600x600/FFE3E8/C9184A?text=DIỆU+HÀ+K-Beauty'"
+                            class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                    </div>
+
+                    <!-- Content -->
+                    <div class="p-4 flex-1 flex flex-col justify-between card-3d-layer-2">
+                        <div>
+                            <div class="flex items-center justify-between text-[11px] text-gray-400 font-semibold mb-1">
+                                <span class="uppercase tracking-wider text-krose-600 font-bold">${p.brand}</span>
+                                <span class="text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md">${p.stock || 'Sẵn hàng'}</span>
+                            </div>
+
+                            <h4 class="font-bold text-gray-800 text-sm line-clamp-2 hover:text-krose-500 transition cursor-pointer mb-2 leading-snug">
+                                ${p.name}
+                            </h4>
+
+                            <p class="text-xs text-gray-500 line-clamp-2 mb-3 leading-relaxed">
+                                ${p.desc || ''}
+                            </p>
+                        </div>
+
+                        <div>
+                            <div class="flex items-baseline gap-2 mb-3">
+                                <span class="text-lg font-extrabold text-krose-600">
+                                    ${formatVND(p.price)}
+                                </span>
+                                ${p.originalPrice && p.originalPrice > p.price ? `<span class="text-xs text-gray-400 line-through">${formatVND(p.originalPrice)}</span>` : ''}
+                            </div>
+
+                            <button onclick="addToCart('${p.id}')" 
+                                class="w-full py-2.5 px-3 rounded-full bg-gradient-to-r from-krose-500 to-rose-600 hover:from-krose-600 hover:to-rose-700 text-white font-bold text-xs shadow-md hover:shadow-lg transition flex items-center justify-center gap-1.5">
+                                <i class="fa-solid fa-cart-plus"></i> Thêm Giỏ Hàng
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                `;
+            }).join('');
+        }
+
+        // 3D Tilt Effect on mouse move
+        function handle3dTilt(e, element) {
+            const rect = element.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            const centerX = rect.width / 2;
+            const centerY = rect.height / 2;
+            
+            const rotateX = ((y - centerY) / centerY) * -10;
+            const rotateY = ((x - centerX) / centerX) * 10;
+            
+            element.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
+        }
+
+        function reset3dTilt(element) {
+            element.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)`;
+        }
+
+        function filterCategory(cat) {
+            activeCategory = cat;
+            document.querySelectorAll('.cat-btn').forEach(btn => {
+                if(btn.dataset.cat === cat) {
+                    btn.className = 'cat-btn px-4 py-2 rounded-full text-xs font-semibold whitespace-nowrap bg-krose-500 text-white shadow-sm transition';
+                } else {
+                    btn.className = 'cat-btn px-4 py-2 rounded-full text-xs font-semibold whitespace-nowrap bg-white text-gray-600 hover:bg-krose-100 border border-krose-100 transition';
+                }
+            });
+            renderProducts();
+        }
+
+        function handleSearch() {
+            const query = document.getElementById('searchInput').value.toLowerCase().trim();
+            filterSearch(query);
+        }
+
+        function handleSearchMobile() {
+            const query = document.getElementById('searchInputMobile').value.toLowerCase().trim();
+            filterSearch(query);
+        }
+
+        function filterSearch(query) {
+            if (!query) {
+                renderProducts();
+                return;
+            }
+            const filtered = products.filter(p => 
+                p.name.toLowerCase().includes(query) || 
+                p.brand.toLowerCase().includes(query) ||
+                p.category.toLowerCase().includes(query)
+            );
+            renderProducts(filtered);
+        }
+
+        // --- GIỎ HÀNG LOGIC ---
+        function addToCart(productId) {
+            const product = products.find(p => p.id === productId);
+            if (!product) return;
+
+            const existingItem = cart.find(item => item.id === productId);
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                cart.push({
+                    id: product.id,
+                    name: product.name,
+                    price: product.price,
+                    image: product.image,
+                    quantity: 1
+                });
+            }
+
+            saveCartToStorage();
+            showToast(`Đã thêm "${product.name.substring(0, 18)}..." vào giỏ!`);
+        }
+
+        function updateCartQuantity(productId, delta) {
+            const item = cart.find(i => i.id === productId);
+            if (!item) return;
+
+            item.quantity += delta;
+            if (item.quantity <= 0) {
+                cart = cart.filter(i => i.id !== productId);
+            }
+            saveCartToStorage();
+            renderCartItems();
+        }
+
+        function updateCartBadge() {
+            const totalCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+            document.getElementById('cartCountBadge').innerText = totalCount;
+        }
+
+        function toggleCartModal() {
+            const modal = document.getElementById('cartModal');
+            if (modal.classList.contains('hidden')) {
+                renderCartItems();
+                modal.classList.remove('hidden');
+            } else {
+                modal.classList.add('hidden');
+            }
+        }
+
+        function renderCartItems() {
+            const container = document.getElementById('cartItemsList');
+            const totalEl = document.getElementById('cartTotalPrice');
+
+            if (cart.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-12 text-gray-400">
+                        <i class="fa-solid fa-basket-shopping text-4xl mb-3 text-krose-200"></i>
+                        <p class="text-xs">Giỏ hàng Diệu Hà đang trống!</p>
+                    </div>
+                `;
+                totalEl.innerText = '0 VNĐ';
+                return;
+            }
+
+            let totalPrice = 0;
+            container.innerHTML = cart.map(item => {
+                const subtotal = item.price * item.quantity;
+                totalPrice += subtotal;
+                return `
+                <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-2xl border border-gray-100">
+                    <img src="${item.image}" alt="${item.name}" class="w-14 h-14 object-cover rounded-xl bg-white border border-gray-100">
+                    <div class="flex-1">
+                        <h5 class="text-xs font-bold text-gray-800 line-clamp-1">${item.name}</h5>
+                        <p class="text-xs text-krose-600 font-semibold mt-0.5">${formatVND(item.price)}</p>
+                        
+                        <div class="flex items-center gap-2 mt-2">
+                            <button onclick="updateCartQuantity('${item.id}', -1)" class="w-5 h-5 rounded-md bg-white border border-gray-300 flex items-center justify-center text-xs text-gray-600 font-bold hover:bg-gray-100">-</button>
+                            <span class="text-xs font-bold px-1">${item.quantity}</span>
+                            <button onclick="updateCartQuantity('${item.id}', 1)" class="w-5 h-5 rounded-md bg-white border border-gray-300 flex items-center justify-center text-xs text-gray-600 font-bold hover:bg-gray-100">+</button>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <span class="text-xs font-bold text-gray-700 block">${formatVND(subtotal)}</span>
+                        <button onclick="updateCartQuantity('${item.id}', -${item.quantity})" class="text-gray-400 hover:text-red-500 text-xs mt-2">
+                            <i class="fa-solid fa-trash-can"></i>
+                        </button>
+                    </div>
+                </div>
+                `;
+            }).join('');
+
+            totalEl.innerText = formatVND(totalPrice);
+        }
+
+        function checkout() {
+            if (cart.length === 0) {
+                showToast("Giỏ hàng đang trống!");
+                return;
+            }
+            window.open('https://zalo.me/0862878500', '_blank');
+            cart = [];
+            saveCartToStorage();
+            toggleCartModal();
+        }
+
+        // --- ADMIN FORM MODAL FUNCTIONS ---
+        function switchImageInputMode(mode) {
+            const tabFile = document.getElementById('tabUploadFile');
+            const tabUrl = document.getElementById('tabUploadUrl');
+            const fileArea = document.getElementById('imageFileArea');
+            const urlArea = document.getElementById('imageUrlArea');
+
+            if (mode === 'file') {
+                tabFile.className = 'py-1 px-3 text-xs font-bold text-krose-600 border-b-2 border-krose-500 flex items-center gap-1';
+                tabUrl.className = 'py-1 px-3 text-xs font-semibold text-gray-400 flex items-center gap-1';
+                fileArea.classList.remove('hidden');
+                urlArea.classList.add('hidden');
+            } else {
+                tabUrl.className = 'py-1 px-3 text-xs font-bold text-krose-600 border-b-2 border-krose-500 flex items-center gap-1';
+                tabFile.className = 'py-1 px-3 text-xs font-semibold text-gray-400 flex items-center gap-1';
+                urlArea.classList.remove('hidden');
+                fileArea.classList.add('hidden');
+            }
+        }
+
+        // Xử lý đọc file từ thiết bị (Convert sang Base64/DataURL & Resize tối ưu kích thước)
+        function handleFileSelect(e) {
+            const file = e.target.files[0];
+            if (file) {
+                processImageFile(file);
+            }
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        function handleDragLeave(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            const file = e.dataTransfer.files[0];
+            if (file && file.type.startsWith('image/')) {
+                processImageFile(file);
+            }
+        }
+
+        function processImageFile(file) {
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const img = new Image();
+                img.onload = function() {
+                    // Nén và resize ảnh để vừa khít đẹp & không nặng localStorage
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    
+                    const maxWidth = 800;
+                    const maxHeight = 800;
+                    let width = img.width;
+                    let height = img.height;
+
+                    if (width > height) {
+                        if (width > maxWidth) {
+                            height *= maxWidth / width;
+                            width = maxWidth;
+                        }
+                    } else {
+                        if (height > maxHeight) {
+                            width *= maxHeight / height;
+                            height = maxHeight;
+                        }
+                    }
+
+                    canvas.width = width;
+                    canvas.height = height;
+                    ctx.drawImage(img, 0, 0, width, height);
+
+                    const base64Data = canvas.toDataURL('image/jpeg', 0.85);
+                    setPreviewAndFinalImage(base64Data, `File từ máy (${Math.round(file.size / 1024)} KB)`);
+                };
+                img.src = event.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function previewImageFromUrl() {
+            const url = document.getElementById('prodImage').value.trim();
+            if (url) {
+                setPreviewAndFinalImage(url, 'Link URL bên ngoài');
+            }
+        }
+
+        function setPreviewAndFinalImage(src, labelText) {
+            document.getElementById('prodImageFinal').value = src;
+            document.getElementById('imgPreview').src = src;
+            document.getElementById('imgSizeText').innerText = labelText;
+            document.getElementById('imgPreviewBox').classList.remove('hidden');
+        }
+
+        function clearSelectedImage() {
+            document.getElementById('prodImageFinal').value = '';
+            document.getElementById('prodImage').value = '';
+            document.getElementById('fileInput').value = '';
+            document.getElementById('imgPreviewBox').classList.add('hidden');
+        }
+
+        function openAdminModal() {
+            if(!isAdminLoggedIn) {
+                openAdminAuthModal();
+                return;
+            }
+            document.getElementById('modalTitle').innerText = "Thêm Sản Phẩm Mới";
+            document.getElementById('productForm').reset();
+            document.getElementById('prodId').value = '';
+            clearSelectedImage();
+            switchImageInputMode('file');
+            document.getElementById('adminModal').classList.remove('hidden');
+        }
+
+        function closeAdminModal() {
+            document.getElementById('adminModal').classList.add('hidden');
+        }
+
+        function editProduct(id) {
+            if(!isAdminLoggedIn) return;
+            const p = products.find(prod => prod.id === id);
+            if (!p) return;
+
+            document.getElementById('modalTitle').innerText = "Cập Nhật Giá & Hình Ảnh";
+            document.getElementById('prodId').value = p.id;
+            document.getElementById('prodName').value = p.name;
+            document.getElementById('prodBrand').value = p.brand;
+            document.getElementById('prodCategory').value = p.category;
+            document.getElementById('prodPrice').value = p.price;
+            document.getElementById('prodOriginalPrice').value = p.originalPrice || '';
+            document.getElementById('prodTag').value = p.tag || '';
+            document.getElementById('prodStock').value = p.stock || 'Sẵn hàng';
+            document.getElementById('prodDesc').value = p.desc || '';
+
+            if (p.image.startsWith('data:image')) {
+                switchImageInputMode('file');
+                setPreviewAndFinalImage(p.image, 'Ảnh đã lưu từ máy');
+            } else {
+                switchImageInputMode('url');
+                document.getElementById('prodImage').value = p.image;
+                setPreviewAndFinalImage(p.image, 'Link URL');
+            }
+
+            document.getElementById('adminModal').classList.remove('hidden');
+        }
+
+        function saveProduct(e) {
+            e.preventDefault();
+            if(!isAdminLoggedIn) return;
+
+            const id = document.getElementById('prodId').value;
+            const name = document.getElementById('prodName').value.trim();
+            const brand = document.getElementById('prodBrand').value.trim();
+            const category = document.getElementById('prodCategory').value;
+            const price = parseFloat(document.getElementById('prodPrice').value);
+            const originalPrice = document.getElementById('prodOriginalPrice').value ? parseFloat(document.getElementById('prodOriginalPrice').value) : null;
+            
+            let image = document.getElementById('prodImageFinal').value.trim();
+            if (!image) {
+                image = document.getElementById('prodImage').value.trim();
+            }
+
+            if (!image) {
+                alert("Vui lòng tải ảnh từ máy hoặc dán link URL hình ảnh!");
+                return;
+            }
+
+            const tag = document.getElementById('prodTag').value.trim();
+            const stock = document.getElementById('prodStock').value;
+            const desc = document.getElementById('prodDesc').value.trim();
+
+            if (id) {
+                const index = products.findIndex(p => p.id === id);
+                if (index !== -1) {
+                    products[index] = { id, name, brand, category, price, originalPrice, image, tag, stock, desc };
+                    showToast("Đã cập nhật sản phẩm thành công!");
+                }
+            } else {
+                const newId = 'p_' + Date.now();
+                products.unshift({ id: newId, name, brand, category, price, originalPrice, image, tag, stock, desc });
+                showToast("Đã thêm sản phẩm mới thành công!");
+            }
+
+            saveProductsToStorage();
+            renderProducts();
+            closeAdminModal();
+        }
+
+        function deleteProduct(id) {
+            if(!isAdminLoggedIn) return;
+            if (confirm("Bạn có chắc chắn muốn xóa sản phẩm này khỏi hệ thống?")) {
+                products = products.filter(p => p.id !== id);
+                saveProductsToStorage();
+                renderProducts();
+                showToast("Đã xóa sản phẩm thành công!");
+            }
+        }
+
+        function formatVND(amount) {
+            return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toastMessage');
+            toastMsg.innerText = msg;
+            
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+
+            setTimeout(() => {
+                toast.classList.remove('translate-y-0', 'opacity-100');
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        }
+
+        function create3dSakuraPetals() {
+            const container = document.getElementById('sakuraContainer');
+            for (let i = 0; i < 20; i++) {
+                const petal = document.createElement('div');
+                petal.classList.add('petal-3d');
+                const size = Math.random() * 12 + 8;
+                petal.style.width = `${size}px`;
+                petal.style.height = `${size * 1.5}px`;
+                petal.style.left = `${Math.random() * 100}%`;
+                petal.style.animationDuration = `${Math.random() * 6 + 7}s`;
+                petal.style.animationDelay = `${Math.random() * 5}s`;
+                container.appendChild(petal);
+            }
+        }
+
+        window.onload = function() {
+            checkAdminSession();
+            loadProducts();
+            loadCart();
+            renderProducts();
+            create3dSakuraPetals();
+        }
+    </script>
+</body>
+</html>
